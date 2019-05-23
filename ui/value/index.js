@@ -19,23 +19,14 @@ const create = (ns, state, view) => {
     value$.pipe(
       map(([value, ...args]) =>
         [
-          view({
-            value,
-            change: ev =>
-              events$.next([`${NS}.change`, ev, ...args])}),
+          value ? view({value}) : '',
           ...args
         ]),
       map(([vnode, ...args]) =>
         [`${NS}.vnode`, vnode, ...args]))
 
-  const change = ([change$, update]) =>
-    change$.pipe(
-      map(([{target:{value}}, ...args]) =>
-        update(value, ...args)))
-
   const events = pipe(juxt([
     pipe(paths([['events$'], [...state, 'value$']]), vnode),
-    pipe(paths([[...ns, 'change$'], [...state, 'update']]),change)
   ]), flatten, apply(merge))
 
   return {hooks, events}
