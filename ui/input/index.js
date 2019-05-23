@@ -1,6 +1,7 @@
 const {input} = require('@cycle/dom');
-const {propEq,pipe,juxt,flatten,apply,mergeLeft} = require('ramda');
-const {filter,map} = require('rxjs/operators');
+const {propEq,pipe,juxt,flatten,apply,remove} = require('ramda');
+const {merge} = require('rxjs');
+const {tap,filter,map} = require('rxjs/operators');
 const {paths} = require('../../../../vendor/subak/ramda')
 
 const create = (ns, state, view) => {
@@ -9,11 +10,10 @@ const create = (ns, state, view) => {
   const hooks = ({events$}) => ({
     vnode$: events$.pipe(
       filter(propEq(0, `${NS}.vnode`)),
-    ),
+      map(remove(0,1))),
     change$: events$.pipe(
-      filter(propEq(0, `${NS},change`)),
-      map(([,...args]) =>
-        args))
+      filter(propEq(0, `${NS}.change`)),
+      map(remove(0,1)))
   })
 
   const vnode = ([events$, value$]) =>
@@ -31,7 +31,7 @@ const create = (ns, state, view) => {
 
   const change = ([change$, update]) =>
     change$.pipe(
-      map(([{target:{value}, ...args}]) =>
+      map(([{target:{value}}, ...args]) =>
         update(value, ...args)))
 
   const events = pipe(juxt([
