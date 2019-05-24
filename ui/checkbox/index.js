@@ -17,6 +17,8 @@ const create = (ns, state, view) => {
 
   const vnode = ([events$, value$]) =>
     value$.pipe(
+      tap(value =>
+        value),
       map(([checked, ...args]) =>
         [
           view({
