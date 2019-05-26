@@ -38,7 +38,7 @@ const create = (ns, state, view) => {
     pipe(paths([[...ns, 'change$'], [...state, 'update']]),change)
   ]), flatten, apply(merge))
 
-  return {hooks, events}
+  return {hooks, events, ns}
 }
 
 module.exports = {create}
