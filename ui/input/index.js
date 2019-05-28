@@ -3,7 +3,9 @@ const {merge} = require('rxjs');
 const {tap,filter,map} = require('rxjs/operators');
 const {paths} = require('../../../../vendor/subak/ramda')
 
-const create = (ns, state, view) => {
+const {view:defaultView} = require('./view')
+
+const create = (ns, state, view=defaultView) => {
   const NS = ns.join('.')
 
   const hooks = ({events$}) => ({
