@@ -1,4 +1,4 @@
-const {assocPath,mergeDeepRight} = require('ramda')
+const {assocPath,mergeDeepRight,flatten} = require('ramda')
 
 const walk = (value, ns=[]) => {
   if (value) {
@@ -15,8 +15,7 @@ const walk = (value, ns=[]) => {
 
 const makeNs = (moduleName, nameMap) => ({
   ns: [moduleName],
-  ...walk(nameMap, [moduleName])
-    .flat(Infinity)
+  ...flatten(walk(nameMap, [moduleName]))
     .reduce(mergeDeepRight, {})[moduleName]
 })
 
