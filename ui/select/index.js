@@ -1,7 +1,8 @@
 const {propEq,pipe,juxt,flatten,apply,remove} = require('ramda');
 const {merge} = require('rxjs');
 const {tap,filter,map,withLatestFrom} = require('rxjs/operators');
-const {paths} = require('../../ramda')
+const {paths} = require('tsugite/ramda')
+const {sink} = require('tsugite/helper/events')
 
 const create = (ns, state, view, options) => {
   const NS = ns.join('.')
@@ -15,7 +16,7 @@ const create = (ns, state, view, options) => {
       map(remove(0,1)))
   })
 
-  const vnode = ([events$, value$, options$]) =>
+  const vnode = ([next, value$, options$]) =>
     value$.pipe(
       tap(value =>
         value),
@@ -26,7 +27,7 @@ const create = (ns, state, view, options) => {
             value,
             options,
             change: ev =>
-              events$.next([`${NS}.change`, ev, ...args])}),
+              next([`${NS}.change`, ev, ...args])}),
           ...args
         ]),
       map(([vnode, ...args]) =>
@@ -38,7 +39,7 @@ const create = (ns, state, view, options) => {
         update(value, ...args)))
 
   const events = pipe(juxt([
-    pipe(paths([['events$'], [...state, 'value$'], options]), vnode),
+    pipe(paths([sink('next', []), [...state, 'value$'], options]), vnode),
     pipe(paths([[...ns, 'change$'], [...state, 'update']]),change)
   ]), flatten, apply(merge))
 

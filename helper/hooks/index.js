@@ -24,6 +24,8 @@ const createStoreHook = (ns, hooks, type) =>
   ({
     [`${type}$`]: hooks.events$.pipe(
       filter(propEq(0, ns.concat(type))),
+      tap(value =>
+        value),
       map(remove(0,1)))
   })
 

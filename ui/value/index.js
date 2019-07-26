@@ -1,7 +1,7 @@
 const {propEq,pipe,juxt,flatten,apply,remove} = require('ramda');
 const {merge} = require('rxjs');
 const {tap,filter,map} = require('rxjs/operators');
-const {paths} = require('../../ramda')
+const {paths} = require('../../../../vendor/subak/ramda')
 
 const create = (ns, state, view) => {
   const NS = ns.join('.')

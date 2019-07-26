@@ -1,20 +1,20 @@
 const {propEq,pipe,juxt,flatten,apply,remove} = require('ramda');
 const {merge} = require('rxjs');
 const {tap,filter,map} = require('rxjs/operators');
-const {paths} = require('../../ramda')
+const {paths} = require('../../../../vendor/subak/ramda')
 
 const create = (ns, state, view, targetValue) => {
   const NS = ns.join('.')
 
-  const hooks = ({events$}) => ({
-    vnode$: events$.pipe(
+  const hooks = hooks => ({
+    vnode$: hooks.events$.pipe(
       filter(propEq(0, `${NS}.vnode`)),
       map(remove(0,1))),
-    change$: events$.pipe(
+    change$: hooks.events$.pipe(
       filter(propEq(0, `${NS}.change`)),
       map(remove(0,1))),
     change: (...args) =>
-      events$.next([`${NS}.change`, ...args])
+      hooks.next.sink([`${NS}.change`, ...args])
   })
 
   const vnode = (change, value$) =>
