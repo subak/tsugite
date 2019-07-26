@@ -1,7 +1,7 @@
 const {propEq,pipe,juxt,flatten,apply,remove} = require('ramda');
 const {merge} = require('rxjs');
 const {tap,filter,map} = require('rxjs/operators');
-const {paths} = require('../../../../vendor/subak/ramda')
+const {paths} = require('tsugite/ramda')
 const {sink} = require('tsugite/helper/events')
 
 const create = (ns, state, view) => {
