@@ -1,14 +1,16 @@
-const {propEq,remove,mergeAll,mergeDeepLeft} = require('ramda')
-const {tap,map,filter} = require('rxjs/operators')
+const {propEq,remove,mergeAll,mergeDeepLeft,identity} = require('ramda')
+const {tap,map,filter,switchMap,share} = require('rxjs/operators')
 
 const createHook = (key, ns, hooks) =>
   ({
     [key]: {
       sink: (...args) =>
         [ns.concat(key).join('.'), ...args],
-      source$: hooks.events$.pipe(
-        filter(propEq(0, ns.concat(key).join('.'))),
-        map(remove(0,1))),
+      source$: hooks.group$.pipe(
+        filter(propEq('key', ns.concat(key).join('.'))),
+        switchMap(identity),
+        map(remove(0,1)),
+        share()),
       next: (...args) =>
         hooks.next(ns.concat(key).join('.'), ...args)
     }

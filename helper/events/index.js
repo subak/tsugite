@@ -1,9 +1,7 @@
 const {pipe,apply,juxt,flatten,prop,propEq,not,nth,hasPath,isNil,path,reject,equals,assocPath} = require('ramda')
 const {merge,Subject,of,zip} = require('rxjs')
-const {tap, filter, map, takeWhile, catchError, concatMap, scan, distinctUntilChanged, delay} = require('rxjs/operators')
+const {tap, filter, map, takeWhile, catchError, concatMap, scan, distinctUntilChanged, delay,groupBy,share} = require('rxjs/operators')
 const {paths} = require('../../ramda')
-
-//const root = require('../../modules/root')
 
 const {createHooks} = require('../hooks');
 
@@ -44,16 +42,17 @@ const createRoot = (locals=[], remotes=[]) => {
 }
 
 const mount = (events,mounter) => {
-  const events$ = new Subject
+  const events$ = new Subject,
+    observable$ = events$.asObservable()
 
   mounter(events({
-    events$: events$.asObservable(),
+    events$: observable$,
     next: {
       sink: ev =>
         events$.next(ev)
-    }
-    // next: ev =>
-    //   events$.next(ev)
+    },
+    group$: observable$.pipe(
+      groupBy(nth(0))),
   })).pipe(
     takeWhile(pipe(propEq(0, 'terminated'), not)))
     .subscribe(events$)
