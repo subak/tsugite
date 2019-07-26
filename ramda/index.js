@@ -3,4 +3,8 @@ const {pipe,juxt,path,map} = require('ramda')
 const paths = indexes =>
   juxt(map(idx => path(idx), indexes))
 
-module.exports = {paths}
+const newInstance = constructor =>
+  (...args) =>
+    new constructor(...args)
+
+module.exports = {paths, newInstance}
