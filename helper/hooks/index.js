@@ -20,37 +20,6 @@ const createHooks = (keys, ns, hooks) =>
   mergeAll(keys.map(key =>
     createHook(key, ns, hooks)))
 
-const createStoreHook = (ns, hooks, type) =>
-  ({
-    [`${type}$`]: hooks.events$.pipe(
-      filter(propEq(0, ns.concat(type))),
-      tap(value =>
-        value),
-      map(remove(0,1)))
-  })
-
-const createUnitHook = (key, ns, hooks) =>
-  createStoreHook(key, ns, hooks, 'unit')
-
-
-const createDataHook = (...args) =>
-  createStoreHook(...args, 'data')
-
-const createBreakingHook = (...args) =>
-  createStoreHook(...args, 'breaking')
-
-const createStoreItemHook = (...args) =>
-  ({
-    ...createUnitHook(...args),
-    ...createDataHook(...args)
-  })
-
-const createStoreArrayHook = (key, ns, hooks) =>
-  ({
-    ...createStoreItemHook(key, ns, hooks),
-    ...createBreakingHook(key, ns, hooks)
-  })
-
 const createUpdateHook = (ns, callback) =>
   ({
     update: {
@@ -71,4 +40,4 @@ const createUpdateInitialHook = (ns, initial, callback) =>
     }
   })
 
-module.exports = {createHook, createHooks, createUpdateHook, createUpdateInitialHook, createUnitHook}
+module.exports = {createHook, createHooks, createUpdateHook, createUpdateInitialHook}
